@@ -5,7 +5,6 @@ from database.schemas.flights import Flight, FlightCreate, FlightUpdate
 
 from datetime import datetime
 from fastapi import Depends, APIRouter
-from fastapi.encoders import jsonable_encoder
 
 from typing import List
 
@@ -67,15 +66,14 @@ def update_flight(
         flight_model.id == flight_id).one()
 
     actual_reccord.id = actual_reccord.id,
-    actual_reccord.ts_departure = actual_reccord.ts_departure if flight_value.ts_departure == None else _transform_datetime(
+    actual_reccord.ts_departure = actual_reccord.ts_departure if flight_value.ts_departure is None else _transform_datetime(
         flight_value.ts_departure),
-    actual_reccord.ts_arrival = actual_reccord.ts_arrival if flight_value.ts_arrival == None else _transform_datetime(
+    actual_reccord.ts_arrival = actual_reccord.ts_arrival if flight_value.ts_arrival is None else _transform_datetime(
         flight_value.ts_arrival),
     actual_reccord.destination_city = actual_reccord.destination_city,
     actual_reccord.departure_city = actual_reccord.departure_city,
-    actual_reccord.status = actual_reccord.status if flight_value.status == None else flight_value.status,
-    actual_reccord.available_seats = actual_reccord.available_seats if flight_value.available_seats == None else flight_value.available_seats
-
+    actual_reccord.status = actual_reccord.status if flight_value.status is None else flight_value.status,
+    actual_reccord.available_seats = actual_reccord.available_seats if flight_value.available_seats is None else flight_value.available_seats
     db.commit()
     db.refresh(actual_reccord)
     return {"message": f"The reccord with id {flight_id} was deleted with successful"}
