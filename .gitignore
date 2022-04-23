@@ -1,2 +1,7 @@
+#cache
+__pycache__/
+#db docker files
 /db/*
+
+# secrets
 .env

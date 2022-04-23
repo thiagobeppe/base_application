@@ -9,3 +9,6 @@ class Flight(BaseModel):
     departure_city : str
     status : str
     available_seats: str
+
+    class Config:
+        orm_mode = True

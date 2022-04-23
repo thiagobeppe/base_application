@@ -1,6 +1,11 @@
-from app.database.schemas import Flight
+from requests import Session
 
-from fastapi import FastAPI, APIRouter
+import deps
+from database.models.flights import Flight as F_model
+from database.schemas.flights import Flight as F_schema
+
+from fastapi import Depends, FastAPI, APIRouter
+from typing import Optional,List
 
 app = FastAPI(
     title="Base Flight Application" , openapi_url="/openapi.json"
@@ -16,6 +21,13 @@ def root() -> dict:
     """
     return {"message": "Hello, World!"}
 
+@api_router.get("/flights", status_code=200, response_model=List[F_schema])
+def get_all_flights(
+        *,
+        db: Session = Depends(deps.get_db)
+    ):
+    flights = db.query(F_model).all()
+    return flights
 
 app.include_router(api_router)
 
