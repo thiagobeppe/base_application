@@ -1,3 +1,5 @@
+from app.database.schemas import Flight
+
 from fastapi import FastAPI, APIRouter
 
 app = FastAPI(
