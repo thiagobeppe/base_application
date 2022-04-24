@@ -38,3 +38,31 @@ jobs:
           psql -h postgres -d postgres -U postgres -c 'CREATE TABLE IF NOT EXISTS flights(id SERIAL PRIMARY KEY,ts_departure TIMESTAMP NOT NULL,ts_arrival TIMESTAMP NOT NULL,destination_city  VARCHAR(20) NOT NULL, departure_city VARCHAR(20) NOT NULL,"status" VARCHAR(10) NOT NULL,vailable_seats INT);'
         env:
           PGPASSWORD: postgres
+
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+        if: steps.cache.outputs.cache-hit != 'true'
+      
+      - name: Test with pytest
+        env:
+          DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
+        run: |
+          python -m pytest
