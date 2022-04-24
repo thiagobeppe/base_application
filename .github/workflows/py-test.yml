@@ -50,7 +50,11 @@ jobs:
 
       
       - name: Install dependencies
-        run: pip install pytest
+        run: |
+          pip install pytest
+          pip install fastapi
+          pip install python-dotenv
+          pip install SQLAlchemy
       
       - name: Test with pytest
         env:
