@@ -1,4 +1,4 @@
-from database.session import Base
+from ..session import Base
 
 from sqlalchemy import String, DateTime, Integer, Column
 
