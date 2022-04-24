@@ -44,9 +44,7 @@ def create_flight(*, db=Depends(get_db), flight_reccord: FlightCreate):
 
 
 @flights_router.put("/flight/{flight_id}", status_code=200)
-def update_flight(
-    *, db=Depends(get_db), flight_id: int, flight_value: FlightUpdate
-):
+def update_flight(*, db=Depends(get_db), flight_id: int, flight_value: FlightUpdate):
     actual_reccord = db.query(flight_model).filter(flight_model.id == flight_id).one()
 
     actual_reccord.id = (actual_reccord.id,)
