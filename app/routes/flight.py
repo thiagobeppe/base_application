@@ -1,7 +1,6 @@
-from datetime import datetime
-import deps
-from database.models.flights import Flight as flight_model
-from database.schemas.flights import Flight, FlightCreate, FlightUpdate
+from ..deps import get_db
+from ..database.models.flights import Flight as flight_model
+from ..database.schemas.flights import Flight, FlightCreate, FlightUpdate
 
 from datetime import datetime
 from fastapi import Depends, APIRouter
@@ -16,19 +15,19 @@ def _transform_datetime(str_date: str) -> datetime:
 
 
 @flights_router.get("/flights", status_code=200, response_model=List[Flight])
-def get_all_flights(*, db=Depends(deps.get_db)):
+def get_all_flights(*, db=Depends(get_db)):
     flights = db.query(flight_model).all()
     return flights
 
 
 @flights_router.get("/flight/{flight_id}", status_code=200, response_model=List[Flight])
-def get_single_flight(*, db=Depends(deps.get_db), flight_id: int):
+def get_single_flight(*, db=Depends(get_db), flight_id: int):
     flight = db.query(flight_model).filter(flight_model.id == flight_id).all()
     return flight
 
 
 @flights_router.post("/flight", status_code=201, response_model=FlightCreate)
-def create_flight(*, db=Depends(deps.get_db), flight_reccord: FlightCreate):
+def create_flight(*, db=Depends(get_db), flight_reccord: FlightCreate):
 
     flight_object = flight_model(
         ts_departure=_transform_datetime(flight_reccord.ts_departure),
@@ -45,9 +44,7 @@ def create_flight(*, db=Depends(deps.get_db), flight_reccord: FlightCreate):
 
 
 @flights_router.put("/flight/{flight_id}", status_code=200)
-def update_flight(
-    *, db=Depends(deps.get_db), flight_id: int, flight_value: FlightUpdate
-):
+def update_flight(*, db=Depends(get_db), flight_id: int, flight_value: FlightUpdate):
     actual_reccord = db.query(flight_model).filter(flight_model.id == flight_id).one()
 
     actual_reccord.id = (actual_reccord.id,)
@@ -77,7 +74,7 @@ def update_flight(
 
 
 @flights_router.delete("/flight/{flight_id}", status_code=200)
-def delete_flight(*, db=Depends(deps.get_db), flight_id: int):
+def delete_flight(*, db=Depends(get_db), flight_id: int):
     flight = db.query(flight_model).filter(flight_model.id == flight_id).one()
     db.delete(flight)
     db.commit()

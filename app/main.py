@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from routes.flight import flights_router
+from .routes.flight import flights_router
 
 app = FastAPI(title="Base Flight Application", openapi_url="/openapi.json")
 
