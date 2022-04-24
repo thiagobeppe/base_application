@@ -1,0 +1,40 @@
+name: postgres-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  postgres-test-job:
+    runs-on: ubuntu-latest
+    container: python:latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install --yes postgresql-client
+
+      # queries database with postgres client
+      - name: create table
+        run: |
+          psql -h postgres -d postgres -U postgres -c 'CREATE TABLE IF NOT EXISTS flights(id SERIAL PRIMARY KEY,ts_departure TIMESTAMP NOT NULL,ts_arrival TIMESTAMP NOT NULL,destination_city  VARCHAR(20) NOT NULL, departure_city VARCHAR(20) NOT NULL,"status" VARCHAR(10) NOT NULL,vailable_seats INT);'
+        env:
+          PGPASSWORD: postgres
