@@ -56,6 +56,7 @@ jobs:
           pip install python-dotenv
           pip install SQLAlchemy
           pip install psycopg2
+          pip install requests
       
       - name: Test with pytest
         env:
